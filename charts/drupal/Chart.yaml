@@ -14,17 +14,17 @@ sources:
   - https://git.drupalcode.org/project/codebase
   - https://github.com/TribusStudio/helm-charts
 dependencies:
-  - name: redis
+  - name: bitnami/redis
     repository: https://charts.bitnami.com/bitnami
-    version: ^7
+    version: ^19
     condition: cache.redis.enabled
-  - name: mariadb
+  - name: bitnami/mariadb
     repository: https://charts.bitnami.com/bitnami
-    version: ^10
+    version: ^18
     condition: database.mariadb.enabled
-  - name: solr
+  - name: bitnami/solr
     repository: https://charts.bitnami.com/bitnami
-    version: ^6
+    version: ^9
     condition: search.solr.enabled
 #  - name: varnish
 #    repository: https://charts.softonic.io
