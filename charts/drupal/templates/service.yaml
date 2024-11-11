@@ -1,3 +1,4 @@
+{{- if and .Values.service (hasKey .Values.service "type") .Values.service.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,9 +8,10 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.service.port | default 80 }}
       targetPort: http
       protocol: TCP
       name: http
   selector:
     {{- include "drupal.labels" . | nindent 4 }}
+{{- end }}
