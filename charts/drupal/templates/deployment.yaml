@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "drupal.fullname" . }}
+  labels:
+    {{- include "drupal.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.drupal.replicas }}
+  selector:
+    matchLabels:
+      {{- include "drupal.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "drupal.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: drupal
+          image: "{{ .Values.drupal.image.repository }}:{{ .Values.drupal.image.tag }}"
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: drupal-files
+              mountPath: /var/www/html/sites/default/files
+            - name: drupal-config
+              mountPath: /var/www/html/sites/default/config
+          env:
+            - name: DRUPAL_DATABASE_HOST
+              value: {{ .Release.Name }}-mariadb
+            - name: DRUPAL_DATABASE_PORT
+              value: "3306"
+            - name: DRUPAL_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-db-secrets
+                  key: database-name
+            - name: DRUPAL_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-db-secrets
+                  key: database-user
+            - name: DRUPAL_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-db-secrets
+                  key: database-password
+      volumes:
+        - name: drupal-files
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-drupal-files
+        - name: drupal-config
+          configMap:
+            name: {{ .Release.Name }}-drupal-config

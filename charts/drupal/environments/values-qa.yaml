@@ -1,0 +1,22 @@
+global:
+  environment: qa
+
+drupal:
+  replicas: 2
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 1000m
+  persistence:
+    size: 10Gi
+
+database:
+  persistence:
+    size: 10Gi
+
+cache:
+  redis:
+    enabled: true
+
+varnish:
+  enabled: true

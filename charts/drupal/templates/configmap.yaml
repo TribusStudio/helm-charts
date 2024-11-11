@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-drupal-config
+  labels:
+    {{- include "drupal.labels" . | nindent 4 }}
+data:
+  settings.php: |
+    $settings['hash_salt'] = '{{ .Values.drupal.hashSalt }}';
+    $settings['trusted_host_patterns'] = [
+    '^{{ .Values.drupal.hostname }}$',
+    ];
+    {{- if .Values.cache.redis.enabled }}
+    $settings['redis.connection']['host'] = '{{ .Release.Name }}-redis-master';
+    $settings['redis.connection']['port'] = 6379;
+    {{- end }}
