@@ -1,0 +1,51 @@
+{{- if .Values.varnish.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-varnish
+  labels:
+    {{- include "drupal.labels" . | nindent 4 }}
+    component: varnish
+spec:
+  replicas: {{ .Values.varnish.replicas | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "drupal.labels" . | nindent 6 }}
+      component: varnish
+  template:
+    metadata:
+      labels:
+        {{- include "drupal.labels" . | nindent 8 }}
+        component: varnish
+    spec:
+      containers:
+        - name: varnish
+          image: "{{ .Values.varnish.image.repository }}:{{ .Values.varnish.image.tag }}"
+          ports:
+            - name: http
+              containerPort: 80
+            - name: admin
+              containerPort: 6082
+          args:
+            - "-F"
+            - "-f"
+            - "/etc/varnish/default.vcl"
+            - "-S"
+            - "/etc/varnish/secret"
+            - "-s"
+            - "malloc,{{ .Values.varnish.memory }}"
+          volumeMounts:
+            - name: varnish-config
+              mountPath: /etc/varnish/default.vcl
+              subPath: default.vcl
+            - name: varnish-secret
+              mountPath: /etc/varnish/secret
+              subPath: secret
+      volumes:
+        - name: varnish-config
+          configMap:
+            name: {{ .Release.Name }}-varnish-config
+        - name: varnish-secret
+          secret:
+            secretName: {{ .Release.Name }}-varnish-secret
+{{- end }}

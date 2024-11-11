@@ -1,0 +1,22 @@
+{{- if .Values.varnish.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-varnish
+  labels:
+    {{- include "drupal.labels" . | nindent 4 }}
+    component: varnish
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 6082
+      targetPort: admin
+      protocol: TCP
+      name: admin
+  selector:
+    {{- include "drupal.labels" . | nindent 4 }}
+    component: varnish
+{{- end }}

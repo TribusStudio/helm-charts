@@ -28,6 +28,15 @@ search:
 
 varnish:
   enabled: false
+  image:
+    repository: varnish
+    tag: "7.3"
+  replicas: 1
+  memory: "256M"
+  config:
+    backend:
+      host: "drupal-service"
+      port: 80
 
 logging:
   driver: fluentd

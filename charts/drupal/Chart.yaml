@@ -27,9 +27,9 @@ dependencies:
     version: ~6.0.0
     condition: search.solr.enabled
   - name: varnish
-    repository: https://charts.bitnami.com/bitnami
-    version: ~3.0.0
-    condition: varnish.enabled[1]
+    repository: https://charts.softonic.io
+    version: ~1.0.0
+    condition: varnish.enabled
 annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/images: |
