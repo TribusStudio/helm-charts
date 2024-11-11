@@ -30,12 +30,12 @@ jobs:
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      #     Add the Softonic repository
+      #     As per https://hoetker.engineer/post/helm-github-workflow-dependency/
     - name: Add Helm dependency repos
       run: |
         helm repo add bitnami https://charts.bitnami.com/bitnami
         helm repo update
-#     Add the Softonic repository
-#     As per https://hoetker.engineer/post/helm-github-workflow-dependency/
         helm repo add softonic https://charts.softonic.io
         helm repo update
 
