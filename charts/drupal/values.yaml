@@ -1,0 +1,34 @@
+global:
+  environment: dev
+
+drupal:
+  image:
+    repository: drupal
+    tag: 10.3.7
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 1000m
+
+database:
+  enabled: true
+  type: mariadb
+  version: "10.6"
+  persistence:
+    size: 10Gi
+
+cache:
+  type: redis
+  enabled: false
+
+search:
+  type: solr
+  enabled: false
+
+varnish:
+  enabled: false
+
+logging:
+  driver: fluentd
+  enabled: true
