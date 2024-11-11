@@ -16,20 +16,20 @@ sources:
 dependencies:
   - name: redis
     repository: https://charts.bitnami.com/bitnami
-    version: ~7.0.0
+    version: ^7
     condition: cache.redis.enabled
   - name: mariadb
     repository: https://charts.bitnami.com/bitnami
-    version: ~10.0.0
+    version: ^10
     condition: database.mariadb.enabled
   - name: solr
     repository: https://charts.bitnami.com/bitnami
-    version: ~6.0.0
+    version: ^6
     condition: search.solr.enabled
-  - name: varnish
-    repository: https://charts.softonic.io
-    version: ~1.0.0
-    condition: varnish.enabled
+#  - name: varnish
+#    repository: https://charts.softonic.io
+#    version: ^1
+#    condition: varnish.enabled
 annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/images: |
