@@ -34,8 +34,8 @@ jobs:
       run: |
         helm repo add bitnami https://charts.bitnami.com/bitnami
         helm repo update
-      # Add the Softonic repository
-      # As per https://hoetker.engineer/post/helm-github-workflow-dependency/
+#     Add the Softonic repository
+#     As per https://hoetker.engineer/post/helm-github-workflow-dependency/
         helm repo add softonic https://charts.softonic.io
         helm repo update
 
