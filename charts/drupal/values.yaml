@@ -1,15 +1,81 @@
 global:
   environment: dev
+  # Set the prefix used for all resources in the Helm chart. If not set,
+  # the prefix will be `<helm release name>`.
+  name: drupal-client-website
+  # The default array of objects containing image pull secret names that will be applied.
+  imagePullSecrets: []
+  # The default image policy for images: `IfNotPresent`, `Always`, `Never`
+  imagePullPolicy: IfNotPresent
+
+features:
+  networkPolicies: false
+  podDisruptionBudgets: false
+
+# Component enablement
+components:
+  zookeeper: false
+  solr: false  # Unless you specifically need search
+  redis: false # Enable only if needed for caching
+  mariadb: true # Keep this as it's essential
+
+# Service account configuration
+serviceAccounts:
+  create: false  # Use default service account for dev
 
 drupal:
   image:
     repository: drupal
     tag: 10.3.7
+  hashSalt: blahlabh
   replicas: 1
   resources:
     limits:
       memory: 512Mi
       cpu: 1000m
+  cronSchedule: "0 */3 * * *"
+
+  persistence:
+    size: 3Gi
+    storageClass: do-block-storage
+
+  ingress:
+    # Enable the ingress for the user interface.
+    enabled: true
+    # Fully qualified domain name of a network host.
+    host: drupal-client.tribus.studio
+    # Path is matched against the path of an incoming request.
+    path: /
+    # Determines the interpretation of the Path matching, must be Prefix to serve assets.
+    pathType: Prefix
+    # The name of an IngressClass cluster resource.
+    ingressClassName: nginx
+    # TLS configuration
+    tls:
+      - hosts:
+          - drupal-client.tribus.studio
+        secretName: registry-https-secret
+    # Annotations to apply to the user interface ingress.
+    annotations:
+      cert-manager.io/issuer: ca-issuer-production
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+
+  service:
+    # Type of service: `LoadBalancer`, `ClusterIP` or `NodePort`. If using `NodePort` service
+    # type, you must set the desired `nodePorts` setting below.
+    type: ClusterIP
+    # Ports that will be exposed on the service
+    port: 80
+    # The port to listhen on the container. If under 1024, the user must be root
+    targetPort: 80
+    # If using a `NodePort` service type, you must specify the desired `nodePort` for each exposed port.
+    nodePort: null
+    # Annotations to apply to the user interface service.
+    annotations: {}
 
 database:
   enabled: true
@@ -17,14 +83,17 @@ database:
   version: "10.6"
   persistence:
     size: 10Gi
+  name: drupal
+  user: drupal
+  password: drupal
 
 cache:
-  type: redis
-  enabled: false
+  redis:
+    enabled: false
 
 search:
-  type: solr
-  enabled: false
+  solr:
+    enabled: false
 
 varnish:
   enabled: false
