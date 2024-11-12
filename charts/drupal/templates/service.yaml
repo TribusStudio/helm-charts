@@ -6,9 +6,9 @@ metadata:
   labels:
     {{- include "drupal.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.drupal.service.type }}
   ports:
-    - port: {{ .Values.service.port | default 80 }}
+    - port: {{ .Values.drupal.service.port | default 80 }}
       targetPort: http
       protocol: TCP
       name: http

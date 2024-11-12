@@ -8,7 +8,7 @@ data:
   settings.php: |
     $settings['hash_salt'] = '{{ .Values.drupal.hashSalt }}';
     $settings['trusted_host_patterns'] = [
-    '^{{ .Values.drupal.hostname }}$',
+    '^{{ .Values.drupal.ingress.host }}$',
     ];
     {{- if .Values.cache.redis.enabled }}
     $settings['redis.connection']['host'] = '{{ .Release.Name }}-redis-master';

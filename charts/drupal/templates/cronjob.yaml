@@ -4,6 +4,9 @@ metadata:
   name: {{ .Release.Name }}-drupal-cron
 spec:
   schedule: {{ .Values.drupal.cronSchedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:

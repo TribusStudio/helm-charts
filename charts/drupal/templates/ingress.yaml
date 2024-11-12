@@ -1,22 +1,38 @@
+{{- if .Values.drupal.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "drupal.fullname" . }}
+  name: {{ include "drupal.fullname" . }}-web-route
   labels:
+    app.kubernetes.io/component: web-route
     {{- include "drupal.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.drupal.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- if .Values.drupal.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.drupal.ingress.ingressClassName }}
+  {{- end -}}
+{{- if .Values.drupal.ingress.tls }}
+  tls:
+{{ tpl (toYaml .Values.drupal.ingress.tls) $ | indent 4 }}
+{{- end }}
   rules:
-    - host: {{ .Values.drupal.hostname }}
-      http:
+    - http:
         paths:
-          - path: /
-            pathType: Prefix
-            backend:
+          - backend:
               service:
-                name: {{ include "drupal.fullname" . }}
+                name: {{ include "drupal.fullname" . }}-web-route
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ .Values.drupal.service.port }}
+            {{- if .Values.drupal.ingress.path }}
+            path: {{ .Values.drupal.ingress.path }}
+            {{- end }}
+            {{- if .Values.drupal.ingress.pathType }}
+            pathType: {{ .Values.drupal.ingress.pathType }}
+            {{- end }}
+      {{- if .Values.drupal.ingress.host }}
+      host: {{ .Values.drupal.ingress.host | quote }}
+      {{- end -}}
+{{- end }}
